@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Contract, ethers } from 'ethers';
+import { ethers, Contract } from 'ethers';
+import * as AWS from 'aws-sdk';
 import * as UserContractArtifact from './assets/UserContract.json';
 import * as TradingContractArtifact from './assets//TradingContract.json';
 import * as EnergyTokenArtifact from './assets//EnergyToken.json';
@@ -7,6 +8,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppService {
+  dynamoDb: AWS.DynamoDB.DocumentClient;
+
   provider: ethers.providers.JsonRpcProvider;
   signer: ethers.Signer;
 
@@ -38,6 +41,17 @@ export class AppService {
       EnergyTokenArtifact.abi,
       this.signer
     );
+
+    const awsAccessKeyId = this.configService.get<string>('aws_access_key_id');
+    const awsSecretAccessKey = this.configService.get<string>('aws_secret_access_key');
+
+    AWS.config.update({
+      accessKeyId: awsAccessKeyId,
+      secretAccessKey: awsSecretAccessKey,
+      region: 'us-east-1', // replace with your region
+    });
+
+    this.dynamoDb = new AWS.DynamoDB.DocumentClient();
   }
 
   async registerUser(name: string, status: number) {
@@ -92,5 +106,23 @@ export class AppService {
   async getOffer(offerId: number) {
     const offer = await this.tradingContract.getOffer(offerId);
     return offer;
+  }
+
+  async getConsumption() {
+    const params = {
+      TableName: 'energyDataConsumption', 
+    };
+
+    const result = await this.dynamoDb.scan(params).promise();
+    return result.Items;
+  }
+
+  async getProduction() {
+    const params = {
+      TableName: 'energyDataProduction', 
+    };
+
+    const result = await this.dynamoDb.scan(params).promise();
+    return result.Items;
   }
 }

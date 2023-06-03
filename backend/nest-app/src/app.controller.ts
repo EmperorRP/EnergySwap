@@ -9,7 +9,7 @@ import { OfferIdDto } from './dtos/offer-id.dto';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Post('register')
   async registerUser(@Body() body: RegisterDto) {
@@ -49,5 +49,15 @@ export class AppController {
   @Get('offer/:offerId')
   async getOffer(@Param('offerId') offerId: number) {
     return this.appService.getOffer(offerId);
+  }
+  
+  @Get('API/consumption')
+  async getConsumption() {
+    return this.appService.getConsumption();
+  }
+
+  @Get('API/production')
+  async getProduction() {
+    return this.appService.getProduction();
   }
 }
