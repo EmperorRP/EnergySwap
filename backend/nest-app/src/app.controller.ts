@@ -25,9 +25,14 @@ export class AppController {
     return this.appService.getUserRole();
   }
 
-  @Get('energyData')
-  async getUserEnergyData() {
-    return this.appService.getUserEnergyData();
+  @Get('energyData/seller')
+  async getSellerEnergyData() {
+    return this.appService.getSellerEnergyData();
+  }
+
+  @Get('energyData/consumer')
+  async getConsumerEnergyData() {
+    return this.appService.getConsumerEnergyData();
   }
 
   @Post('addListing')

@@ -77,12 +77,25 @@ export class AppService {
     return { role };
   }
 
-  async getUserEnergyData() {
-    // get the user's energy data from the contract
-    const energyData = await this.energyDataContract.getEnergyData(this.signer.getAddress());
-
-    return { energyData };
+  async getSellerEnergyData() {
+    const params = {
+      TableName: 'energyDataProduction'
+    };
+  
+    const scanResults = await this.dynamoDb.scan(params).promise();
+  
+    return { productionData: scanResults.Items };
   }
+  
+  async getConsumerEnergyData() {
+    const params = {
+      TableName: 'energyDataConsumption'
+    };
+  
+    const scanResults = await this.dynamoDb.scan(params).promise();
+  
+    return { consumptionData: scanResults.Items };
+  }  
 
   async addListing(units: number, pricePerUnit: number) {
     // add a new listing to the market contract
