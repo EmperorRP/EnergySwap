@@ -6,58 +6,37 @@ import { TradeDto } from './dtos/trade.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { OfferIdDto } from './dtos/offer-id.dto';
 
-
-@Controller()
+@Controller('user')
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
   @Post('register')
   async registerUser(@Body() body: RegisterDto) {
-    return this.appService.registerUser(body.name, body.status);
+    return this.appService.registerUser(body.name);
   }
 
-  @Post('update')
-  async updateUserDetails(@Body() body: UpdateUserDto) {
-    return this.appService.updateUserDetails(body.name, body.status);
+  @Post('becomeSeller')
+  async becomeSeller() {
+    return this.appService.becomeSeller();
   }
 
-  @Get('user/:address')
-  async getUserDetails(@Param('address') address: string) {
-    return this.appService.getUserDetails(address);
+  @Get('role')
+  async getUserRole() {
+    return this.appService.getUserRole();
   }
 
-  @Post('list')
-  async listEnergy(@Body() body: ListEnergyDto) {
-    return this.appService.listEnergy(body.amount, body.price);
+  @Get('energyData')
+  async getUserEnergyData() {
+    return this.appService.getUserEnergyData();
   }
 
-  @Post('buy-energy')
-  async buyEnergy(@Body() body: OfferIdDto) {
-    return this.appService.buyEnergy(body.offerId);
+  @Post('addListing')
+  async addListing(@Body() body: ListEnergyDto) {
+    return this.appService.addListing(body.units, body.pricePerUnit);
   }
 
-  // @Post('cancel-trade')
-  // async cancelTrade(@Body() body: OfferIdDto) {
-  //   return this.appService.cancelTrade(body.offerId);
-  // }
-
-  @Get('all-offers')
-  async getAllOffers() {
-    return this.appService.getAllOffers();
-  }
-
-  @Get('offer/:offerId')
-  async getOffer(@Param('offerId') offerId: number) {
-    return this.appService.getOffer(offerId);
-  }
-  
-  @Get('API/consumption')
-  async getConsumption() {
-    return this.appService.getConsumption();
-  }
-
-  @Get('API/production')
-  async getProduction() {
-    return this.appService.getProduction();
+  @Post('purchase')
+  async purchase(@Body() body: OfferIdDto) {
+    return this.appService.purchase(body.offerId);
   }
 }

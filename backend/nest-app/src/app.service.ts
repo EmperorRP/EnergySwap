@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ethers, Contract } from 'ethers';
 import * as AWS from 'aws-sdk';
 import * as UserContractArtifact from './assets/UserContract.json';
-import * as TradingContractArtifact from './assets//TradingContract.json';
-import * as EnergyTokenArtifact from './assets//EnergyToken.json';
+import * as MarketContractArtifact from './assets/MarketContract.json';
+import * as EnergyDataContractArtifact from './assets/EnergyDataContract.json';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -14,8 +14,8 @@ export class AppService {
   signer: ethers.Signer;
 
   userContract: Contract;
-  tradingContract: Contract;
-  energyToken: Contract;
+  marketContract: Contract;
+  energyDataContract: Contract;
 
   constructor(private configService: ConfigService) {
     const apiKey = this.configService.get<string>('INFURA_API_KEY');
@@ -30,15 +30,15 @@ export class AppService {
       this.signer
     );
 
-    this.tradingContract = new Contract(
-      this.configService.get<string>('TRADING_CONTRACT_ADDRESS'), 
-      TradingContractArtifact.abi, 
+    this.marketContract = new Contract(
+      this.configService.get<string>('MARKET_CONTRACT_ADDRESS'), 
+      MarketContractArtifact.abi, 
       this.signer
     );
 
-    this.energyToken = new Contract(
-      this.configService.get<string>('ENERGY_TOKEN_ADDRESS'),
-      EnergyTokenArtifact.abi,
+    this.energyDataContract = new Contract(
+      this.configService.get<string>('ENERGY_DATA_CONTRACT_ADDRESS'),
+      EnergyDataContractArtifact.abi,
       this.signer
     );
 
@@ -54,75 +54,49 @@ export class AppService {
     this.dynamoDb = new AWS.DynamoDB.DocumentClient();
   }
 
-  async registerUser(name: string, status: number) {
-    if (!name || status === undefined) {
-      throw new Error('Name or status is undefined');
-    }
-    const tx = await this.userContract.register(name, status);
+  async registerUser(name: string) {
+    // register the user in the contract
+    const tx = await this.userContract.register(name);
     await tx.wait();
-    return tx.hash;
+
+    return { message: 'User registered successfully' };
   }
 
-  async updateUserDetails(name: string, status: number) {
-    // Check if name or status is undefined
-    if (!name || status === undefined) {
-      throw new Error('Name or status is undefined');
-    }
-
-    const tx = await this.userContract.updateDetails(name, status);
+  async becomeSeller() {
+    // change the user role to Seller in the contract
+    const tx = await this.userContract.becomeSeller();
     await tx.wait();
-    return tx.hash;
+
+    return { message: 'Become seller successfully' };
   }
 
-  async getUserDetails(userAddress: string) {
-    const details = await this.userContract.getDetails(userAddress);
-    return details;
+  async getUserRole() {
+    // get the user's role from the contract
+    const role = await this.userContract.getUserRole(this.signer.getAddress());
+
+    return { role };
   }
 
-  async listEnergy(amount: string, price: number) {
-    const weiAmount = ethers.utils.parseEther(amount);
-    const tx = await this.tradingContract.listEnergy(weiAmount, price); // amount should be in ETH value
+  async getUserEnergyData() {
+    // get the user's energy data from the contract
+    const energyData = await this.energyDataContract.getEnergyData(this.signer.getAddress());
+
+    return { energyData };
+  }
+
+  async addListing(units: number, pricePerUnit: number) {
+    // add a new listing to the market contract
+    const tx = await this.marketContract.addListing(units, pricePerUnit);
     await tx.wait();
-    return tx.hash;
+
+    return { message: 'Listing added successfully' };
   }
 
-  async buyEnergy(offerId: number) {
-    const tx = await this.tradingContract.buyEnergy(offerId);
+  async purchase(offerId: string) {
+    // make a purchase from the market contract
+    const tx = await this.marketContract.purchase(offerId);
     await tx.wait();
-    return tx.hash;
-  }
 
-  async cancelTrade(offerId: number) {
-    const tx = await this.tradingContract.cancelTrade(offerId);
-    await tx.wait();
-    return tx.hash;
-  }
-
-  async getAllOffers() {
-    const offers = await this.tradingContract.getAllOffers();
-    return offers;
-  }
-
-  async getOffer(offerId: number) {
-    const offer = await this.tradingContract.getOffer(offerId);
-    return offer;
-  }
-
-  async getConsumption() {
-    const params = {
-      TableName: 'energyDataConsumption', 
-    };
-
-    const result = await this.dynamoDb.scan(params).promise();
-    return result.Items;
-  }
-
-  async getProduction() {
-    const params = {
-      TableName: 'energyDataProduction', 
-    };
-
-    const result = await this.dynamoDb.scan(params).promise();
-    return result.Items;
+    return { message: 'Purchase successful' };
   }
 }
