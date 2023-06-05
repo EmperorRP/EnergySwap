@@ -40,7 +40,6 @@ export class AppController {
     return this.appService.getAllListings();
   }
 
-
   @Post('purchase')
   async purchase(@Body() body: OfferIdDto) {
     return this.appService.purchase(body.offerId);
