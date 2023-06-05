@@ -10,11 +10,6 @@ import { OfferIdDto } from './dtos/offer-id.dto';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Post('register')
-  async registerUser(@Body() body: RegisterDto) {
-    return this.appService.registerUser(body.name);
-  }
-
   @Post('becomeSeller')
   async becomeSeller() {
     return this.appService.becomeSeller();
@@ -39,6 +34,12 @@ export class AppController {
   async addListing(@Body() body: ListEnergyDto) {
     return this.appService.addListing(body.units, body.pricePerUnit);
   }
+
+  @Get('listings')
+  async getAllListings() {
+    return this.appService.getAllListings();
+  }
+
 
   @Post('purchase')
   async purchase(@Body() body: OfferIdDto) {

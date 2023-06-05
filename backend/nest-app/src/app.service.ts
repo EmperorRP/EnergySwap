@@ -54,14 +54,6 @@ export class AppService {
     this.dynamoDb = new AWS.DynamoDB.DocumentClient();
   }
 
-  async registerUser(name: string) {
-    // register the user in the contract
-    const tx = await this.userContract.register(name);
-    await tx.wait();
-
-    return { message: 'User registered successfully' };
-  }
-
   async becomeSeller() {
     // change the user role to Seller in the contract
     const tx = await this.userContract.becomeSeller();
@@ -112,4 +104,17 @@ export class AppService {
 
     return { message: 'Purchase successful' };
   }
+
+  async getAllListings() {
+    const listings = [];
+    const listingsCount = await this.marketContract.getListingCount();
+  
+    for (let i = 0; i < listingsCount; i++) {
+      const listing = await this.marketContract.listings(i);
+      listings.push(listing);
+    }
+  
+    return { listings };
+  }  
+  
 }
