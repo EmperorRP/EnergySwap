@@ -53,16 +53,16 @@ const DropDownItem = styled.div`
   animation: ${scaleZ} 300ms ${60 * (props.index)}ms ease-in-out forwards;
 `}
   `
-const paymentMethods = ['EFT Token', 'method 2', 'method 3']
+const paymentMethods = ['ETH', 'MATIC', 'GOERLI']
 
 
 export default function P2P() {
 
     const [mode, setMode] = useState('Buyer');
-    const [paymentMethod, setPaymentMethod] = useState('EFT Token');
+    const [paymentMethod, setPaymentMethod] = useState('ETH');
 
     const [pricePerUnitUSD, setPricePerUnitUSD] = useState('');
-    const [pricePerUnitMATIC, setPricePerUnitMATIC] = useState('');
+    const [pricePerUnitETH, setPricePerUnitETH] = useState('');
     const [pricePerUnitError, setPricePerUnitError] = useState("");
     const [amount, setAmount] = useState('');
     const [amountError, setAmountError] = useState("");
@@ -83,17 +83,62 @@ export default function P2P() {
         if (mode == 'Seller') {
             setAddedListingMessage("")
 
-            const getConversionRate = async () => {
-                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd');
-                const data = await response.json();
-                const maticPriceInUSD = data['matic-network'].usd;
 
-                const conversionRate = (1 / maticPriceInUSD)
-                setPricePerUnitConversionRate(conversionRate)
+            const becomeSeller = async () => {
+                try {
+                    setLoading(true)
+                    const url = 'http://localhost:4000/user/becomeSeller';
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            // Add your request payload here
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Request failed');
+                    }
+
+                    const data = await response.json();
+                    console.log('Response:', data);
+                    setLoading(false)
+                } catch (error) {
+                    console.error('Error:', error.message);
+                    setLoading(false)
+                }
+            };
+
+
+            async function getUserRole() {
+                try {
+                    const response = await fetch('http://localhost:4000/user/role');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user role');
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error:', error.message);
+                    // Handle the error gracefully
+                    // Return an appropriate value or rethrow the error
+                }
             }
-            getConversionRate()
 
-
+            getUserRole()
+                .then(roleResponse => {
+                    console.log('User Role:', roleResponse.role);
+                    // Handle the user role data
+                    if (roleResponse.role != 1) {
+                        becomeSeller();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                    // Handle the error gracefully
+                });
         }
 
         else if (mode === 'Buyer') {
@@ -105,43 +150,48 @@ export default function P2P() {
                     const response = await fetch('http://localhost:4000/user/listings');
                     const data = await response.json();
                     setListings([...data.listings].reverse());
+                    setLoading(false)
 
                 } catch (error) {
                     console.error('Error fetching energy data:', error);
+                    setLoading(false)
                 }
             };
 
             fetchListingsData();
         }
 
+        const getConversionRate = async () => {
+            const response = await fetch('https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=ETH');
+            const data = await response.json();
+
+            const ethPriceInUSD = data.ETH;
+
+            setPricePerUnitConversionRate(ethPriceInUSD)
+        }
+        getConversionRate()
+
     }, [mode])
 
 
-    useEffect(() => {
-        if (listings?.length != 0)
-            setLoading(false)
-
-    }, [listings])
-
-
 
     useEffect(() => {
-        if (pricePerUnitUSD == "" || pricePerUnitMATIC == "") {
+        if (pricePerUnitUSD == "" || pricePerUnitETH == "") {
             setPricePerUnitError("");
-        } else if (pricePerUnitUSD <= 0 || pricePerUnitMATIC <= 0) {
-            setPricePerUnitError("Price Per Unit should be a positive number > zero!");
+        } else if (pricePerUnitUSD <= 0 || pricePerUnitETH <= 0) {
+            setPricePerUnitError("Price Per Unit should be a positive number greater than zero!");
         }
         else {
             setPricePerUnitError("");
         }
-    }, [pricePerUnitUSD, pricePerUnitMATIC]);
+    }, [pricePerUnitUSD, pricePerUnitETH]);
 
 
     useEffect(() => {
         if (amount == "") {
             setAmountError("");
         } else if (amount <= 0) {
-            setAmountError("Amount should be a positive number > zero !");
+            setAmountError("Amount should be a positive number greater than zero!");
         } else {
             setAmountError("");
         }
@@ -153,10 +203,10 @@ export default function P2P() {
 
         if (currency == 'usd') {
             setPricePerUnitUSD(e.target.value)
-            setPricePerUnitMATIC((pricePerUnitConversionRate * e.target.value).toFixed(3))
+            setPricePerUnitETH((pricePerUnitConversionRate * e.target.value).toFixed(3))
         }
-        else if (currency == 'matic') {
-            setPricePerUnitMATIC(e.target.value)
+        else if (currency == 'eth') {
+            setPricePerUnitETH(e.target.value)
             setPricePerUnitUSD((1 / pricePerUnitConversionRate * e.target.value).toFixed(3))
         }
     }
@@ -366,7 +416,7 @@ export default function P2P() {
                         {/* Available amount */}
                         {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">300 NRGT</div> */}
                         {/* method */}
-                        {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">MATIC</div> */}
+                        {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">ETH</div> */}
                         {/* Total */}
                         {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">$69</div> */}
                         {/* action Btn */}
@@ -389,13 +439,13 @@ export default function P2P() {
                                     {/* Seller  */}
                                     <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] pl-[45px] w-[10%]">{listing[0]?.slice(0, 4)}....${listing[0]?.slice(-4)}</div>
                                     {/* Price */}
-                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">${parseInt(listing[2].hex, 16)}</div>
+                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{(parseInt(listing[2].hex, 16) * pricePerUnitConversionRate).toFixed(3)} ETH</div>
                                     {/* Available amount */}
                                     <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{parseInt(listing[1].hex, 16)}</div>
                                     {/* method */}
-                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">EFT</div>
+                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">ETH</div>
                                     {/* Total */}
-                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">${parseInt(listing[2].hex, 16) * parseInt(listing[1].hex, 16)}</div>
+                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{(parseInt(listing[2].hex, 16) * pricePerUnitConversionRate * parseInt(listing[1].hex, 16)).toFixed(3)} ETH</div>
                                     {/* action Btn */}
                                     <div className="flex items-center justify-end pr-[30px] w-[23%]">
                                         <button className={`${styles.placeRequestBtn} px-[20px] py-[5px] hover:bg-green-500 font-poppins font-bold text-[24px] leading-[36px] text-white transition-colors duration-300`}>
@@ -442,10 +492,10 @@ export default function P2P() {
                             <input type="number"
                                 placeholder="0"
                                 className={`${styles.pricePerUnitInput} text-right mx-[8px]`}
-                                value={pricePerUnitMATIC}
-                                onChange={(e) => onChangePricePerUnit(e, 'matic')}
+                                value={pricePerUnitETH}
+                                onChange={(e) => onChangePricePerUnit(e, 'eth')}
                             />
-                            MATIC
+                            ETH
                         </div>
 
                     </div>
@@ -458,7 +508,7 @@ export default function P2P() {
                     {/* field row */}
                     <div className="z-20 flex items-center justify-between w-[70%] ml-[6%] mt-[36px]">
                         {/* label */}
-                        <div className="font-barlow font-normal text-white text-[36px] leading-[43px]">Amount (NRGT)</div>
+                        <div className="font-barlow font-normal text-white text-[36px] leading-[43px]">Amount (Units)</div>
 
                         {/* Input */}
                         <div className="flex items-center justify-center w-[60%]  border-[1px] rounded-[5px] py-[10px] font-barlow font-normal text-white text-[32px] leading-[38px]">
@@ -482,7 +532,7 @@ export default function P2P() {
                         <div className="font-barlow font-normal text-white text-[36px] leading-[43px]">Total Price</div>
                         {/* Input */}
                         <div className="flex items-center justify-center w-[60%]  border-[1px] rounded-[5px] py-[10px] font-barlow font-normal text-white text-[32px] leading-[38px]">
-                            {(pricePerUnitUSD * amount).toFixed(2)} USD&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;{(pricePerUnitMATIC * amount).toFixed(2)} MATIC
+                            {(pricePerUnitUSD * amount).toFixed(2)} USD&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;{(pricePerUnitETH * amount).toFixed(2)} ETH
                         </div>
                     </div>
 

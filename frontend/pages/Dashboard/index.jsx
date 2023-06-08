@@ -4,19 +4,23 @@ import SideBar from "../../components/SideBar";
 import { useState, useEffect } from "react";
 import Graph from "../../components/Graph";
 
+import Spinner from "../../components/Spinner";
+
 export default function Dashboard() {
 
-    const [graphOption, setGraphOption] = useState('7d');
+    const [graphOption, setGraphOption] = useState('1h');
     const [mode, setMode] = useState('Buyer');
     const [energyData, setEnergyData] = useState([]);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (mode === 'Buyer') {
+                if (mode === 'Buyer' || refresh) {
                     const response = await fetch('http://localhost:4000/user/energyData/consumer');
                     const data = await response.json();
                     setEnergyData(data.consumptionData);
+                    setRefresh(false)
                 } else if (mode === 'Seller') {
                     const response = await fetch('http://localhost:4000/user/energyData/seller');
                     const data = await response.json();
@@ -28,7 +32,9 @@ export default function Dashboard() {
         };
 
         fetchData();
-    }, [mode]);
+    }, [mode, refresh]);
+
+
 
 
     console.log('EnergyData', energyData)
@@ -37,7 +43,7 @@ export default function Dashboard() {
     return (
         <div className={`${styles.main} flex items-start justify-between`}>
             <Head>
-                <title>Dashboard</title>
+                <title>Buyer Dashboard</title>
                 <meta name="description" content="Dashboard" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
@@ -82,7 +88,7 @@ export default function Dashboard() {
                                 onClick={() => setGraphOption('1m')}>
                                 1m
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -109,7 +115,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col name */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px]">
-                                Quantity
+                                Amount
                             </div>
                             {/* Col name */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px]">
@@ -131,7 +137,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                10 NRGT
+                                60 units
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -151,7 +157,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                10 NRGT
+                                70 units
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -171,7 +177,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                10 NRGT
+                                10 units
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -190,7 +196,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                10 NRGT
+                                40 units
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -201,21 +207,54 @@ export default function Dashboard() {
                     {/* Sales/ Saving Container */}
                     <div className={`${styles.containerGradient} w-[31%] h-[462px] flex flex-col items-center justify-start z-20`}>
                         <div className="font-barlow font-medium text-white text-[40px] leading-[48px] text-center mt-[30px]">
-                            {mode == 'Buyer' ? 'Savings' : mode == 'Seller' && 'Total Sales'}
+                            {mode == 'Buyer' ? 'Latest Data' : mode == 'Seller' && 'Total Sales'}
                         </div>
-                        <div
-                            style={{ color: 'rgba(127, 253, 132, 0.950781)' }}
-                            className="font-barlow font-bold text-white text-[64px] leading-[76.8px] text-center mt-[45px]">
-                            {mode == 'Buyer' ? '$221.4' : mode == 'Seller' && '23'}
-                        </div>
-                        <div className="font-barlow font-normal font-light text-[36px] leading-[43px] text-center text-white mt-[50px]">
-                            {mode == 'Buyer' ? 'When compared to traditional utility' : mode == 'Seller' && 'this month'}
-                        </div>
+
+                        {mode == 'Buyer' ?
+                            <>
+                                <div className="font-barlow font-normal font-light text-[36px] leading-[43px] text-center text-white mt-[50px]">
+                                    Units Consumed: <span style={{ color: 'rgba(127, 253, 132, 0.950781)' }}
+                                        className="font-barlow font-bold text-white text-[30px] leading-[76.8px] text-center mt-[45px]"> {energyData[energyData.length - 1]?.units_consumed}</span>
+                                </div>
+
+                                <div className="font-barlow font-normal font-light text-[36px] leading-[43px] text-center text-white mb-[50px]">
+                                    Time: <span style={{ color: 'rgba(127, 253, 132, 0.950781)' }}
+                                        className="font-barlow font-bold text-white text-[30px] leading-[76.8px] text-center mt-[45px]">  {(new Date(energyData[energyData.length - 1]?.timestamp * 1000)).toLocaleString('en-US', {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        })}</span>
+                                </div>
+
+                                {refresh ? <Spinner /> :
+                                    <button
+
+                                        className="text-white border hover:text-green-500 font-poppins font-normal font-semibold text-[32px] leading-[48px] text-center px-4 py-2 transition-colors duration-300"
+                                        onClick={() => setRefresh(true)} type="button">
+                                        Refresh
+                                    </button>
+                                }
+                            </>
+                            :
+                            <>
+                                <div
+                                    style={{ color: 'rgba(127, 253, 132, 0.950781)' }}
+                                    className="font-barlow font-bold text-white text-[64px] leading-[76.8px] text-center mt-[45px]">
+                                    114
+                                </div>
+                                <div className="font-barlow font-normal font-light text-[36px] leading-[43px] text-center text-white mt-[50px]">
+                                    this month
+                                </div>
+                            </>
+                        }
                     </div>
                 </div>
 
                 {/* Thankyou text */}
-                <div className="font-barlow font-medium text-white text-[36px] leading-[43px] text-center my-[60px] z-20">Thank you, Nevan, for using EnergySwap and saving the planet!</div>
+                <div className="font-barlow font-medium text-white text-[36px] leading-[43px] text-center my-[60px] z-20">Thank you, for using EnergySwap and saving the planet!</div>
 
                 <div className={styles.bgPatch1}></div>
                 <div className={styles.bgPatch2}></div>

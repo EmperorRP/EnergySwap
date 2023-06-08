@@ -2,8 +2,7 @@ import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, useAccount, WagmiConfig } from "wagmi";
-
+import { configureChains, createClient, useAccount, WagmiConfig } from "wagmi";
 import {
 	mainnet,
 	polygon,
@@ -16,14 +15,12 @@ import {
 	polygonZkEvm,
 	polygonZkEvmTestnet,
 } from "wagmi/chains";
-
-
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import MainLayout from "../layout/mainLayout";
 import { useRouter } from "next/router";
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
+const { chains, provider } = configureChains(
 	[
 		mainnet,
 		goerli,
@@ -32,9 +29,9 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 		optimism,
 		optimismGoerli,
 		arbitrum,
-		arbitrumGoerli,
-		polygonZkEvm,
-		polygonZkEvmTestnet
+    arbitrumGoerli,
+    polygonZkEvm,
+    polygonZkEvmTestnet
 	],
 	[alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }), publicProvider()]
 );
@@ -44,17 +41,23 @@ const { connectors } = getDefaultWallets({
 	chains,
 });
 
-const config = createConfig({
+const wagmiClient = createClient({
 	autoConnect: true,
 	connectors,
-	publicClient, webSocketPublicClient
+	provider,
 });
 
 export { WagmiConfig, RainbowKitProvider };
 
 function MyApp({ Component, pageProps }) {
+	const router = useRouter();
+	const account = useAccount({
+		onConnect({ address, connector, isReconnected }) {
+			if (!isReconnected) router.reload();
+		},
+	});
 	return (
-		<WagmiConfig config={config}>
+		<WagmiConfig client={wagmiClient}>
 			<RainbowKitProvider
 				modalSize="compact"
 				initialChain={process.env.NEXT_PUBLIC_DEFAULT_CHAIN}
