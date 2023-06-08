@@ -1,0 +1,30 @@
+.main {
+	background: linear-gradient(123.56deg, #080B0E 6.28%, #030E19 91.98%);
+	min-height: 100vh;
+}
+
+.bgPatch1 {
+	position: absolute;
+	width: 393px;
+	height: 273px;
+	left: 100px;
+	top: 260px;
+
+	background: #336635;
+	filter: blur(186px);
+}
+
+.bgPatch2Container {
+	height: 300px;
+	width: 80%;
+	margin-right: -100px;
+	margin-top: -100px;
+	overflow: hidden;
+	background: #336635;
+	filter: blur(186px);
+}
+
+.bgPatch2 {
+	width: 1006px;
+	height: 702px;
+}

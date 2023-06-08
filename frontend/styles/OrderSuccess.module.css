@@ -1,0 +1,42 @@
+.main {
+    background: linear-gradient(123.56deg, #080B0E 6.28%, #030E19 91.98%);
+    min-height: 100vh;
+}
+
+.container {
+    height: 747px;
+
+    background: linear-gradient(90.5deg, #222222 15.87%, rgba(34, 34, 34, 0.6) 61.15%);
+    border: 1px solid #707070;
+    box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(25px);
+    border-radius: 14px;
+}
+
+.bgPatch1 {
+	position: absolute;
+	width: 393px;
+	height: 273px;
+	left: 113px;
+	top: 299px;
+	margin-left: 4%;
+	margin-top: 2%;
+
+	background: #336635;
+	filter: blur(186px);
+}
+
+.patch2Container {
+	margin-top: -7%;
+}
+
+.bgPatch2 {
+	/* position: absolute; */
+	width: 1006px;
+	height: 702px;
+
+	background: #336635;
+	filter: blur(186px);
+	background-size: cover;
+	background-position: top;
+}

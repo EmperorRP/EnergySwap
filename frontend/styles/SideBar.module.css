@@ -1,0 +1,27 @@
+.background {
+    background: linear-gradient(180deg, #181A1C 0%, rgba(24, 26, 28, 0.93) 73.6%, rgba(24, 26, 28, 0.9) 100%);
+    position: fixed;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.iconContainer {
+    width: 60px;
+    height: 60px;
+    background: #393939;
+    border-radius: 20px;
+    position: fixed;
+}
+
+
+.fadeIn {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    background: transparent;
+  }
+  
+  .fadeIn.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
