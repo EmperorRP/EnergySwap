@@ -8,7 +8,7 @@ import Spinner from "../../components/Spinner";
 
 export default function Dashboard() {
 
-    const [graphOption, setGraphOption] = useState('1h');
+    const [graphOption, setGraphOption] = useState('7d');
     const [mode, setMode] = useState('Buyer');
     const [energyData, setEnergyData] = useState([]);
     const [refresh, setRefresh] = useState(false);
@@ -43,7 +43,7 @@ export default function Dashboard() {
     return (
         <div className={`${styles.main} flex items-start justify-between`}>
             <Head>
-                <title>Buyer Dashboard</title>
+                <title>Dashboard</title>
                 <meta name="description" content="Dashboard" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
@@ -115,7 +115,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col name */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px]">
-                                Amount
+                                Quantity
                             </div>
                             {/* Col name */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px]">
@@ -137,7 +137,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                60 units
+                                10 NRGT
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -157,7 +157,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                70 units
+                                10 NRGT
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -177,7 +177,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                10 units
+                                10 NRGT
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -196,7 +196,7 @@ export default function Dashboard() {
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
-                                40 units
+                                10 NRGT
                             </div>
                             {/* Col entry */}
                             <div className="font-barlow font-normal text-white text-[24px] leading-[29px] w-[200px] ">
@@ -243,7 +243,7 @@ export default function Dashboard() {
                                 <div
                                     style={{ color: 'rgba(127, 253, 132, 0.950781)' }}
                                     className="font-barlow font-bold text-white text-[64px] leading-[76.8px] text-center mt-[45px]">
-                                    114
+                                    23
                                 </div>
                                 <div className="font-barlow font-normal font-light text-[36px] leading-[43px] text-center text-white mt-[50px]">
                                     this month
@@ -254,7 +254,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Thankyou text */}
-                <div className="font-barlow font-medium text-white text-[36px] leading-[43px] text-center my-[60px] z-20">Thank you, for using EnergySwap and saving the planet!</div>
+                <div className="font-barlow font-medium text-white text-[36px] leading-[43px] text-center my-[60px] z-20">Thank you, Nevan, for using EnergySwap and saving the planet!</div>
 
                 <div className={styles.bgPatch1}></div>
                 <div className={styles.bgPatch2}></div>

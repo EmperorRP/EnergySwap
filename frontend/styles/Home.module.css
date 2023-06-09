@@ -1,10 +1,151 @@
-
-
 .main {
-	padding: 2rem 0;
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	background: linear-gradient(123.56deg, #080B0E 6.28%, #030E19 91.98%);
+	min-height: 100vh;
+	z-index: 1000;
+	position: relative;
+}
+
+.iconContainercircle {
+	width: 15rem;
+	height: 15rem;
+	box-shadow: 0px 14px 4px rgba(0, 0, 0, 0.25);
+	opacity: 0;
+
+	animation-name: slideInFromBelow;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	animation-timing-function: ease-in-out;
+}
+
+
+@keyframes slideInFromBelow {
+	from {
+		margin-top: 300px;
+		opacity: 0
+	}
+
+	to {
+		margin-top: 0px;
+		opacity: 1
+	}
+}
+
+.rightSlide {
+	animation-name: slideInFromLeft;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes slideInFromLeft {
+	from {
+		margin-right: 300px;
+		opacity: 0
+	}
+
+	to {
+		margin-right: 0px;
+		opacity: 1
+	}
+}
+
+.leftSlide {
+	animation-name: slideInFromRight;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes slideInFromRight {
+	from {
+		margin-left: 300px;
+		opacity: 0
+	}
+
+	to {
+		margin-left: 0px;
+		opacity: 1
+	}
+}
+
+.topSlide {
+
+	animation-name: slideInFromTop;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes slideInFromTop {
+	from {
+		margin-top: 0px;
+		opacity: 0
+	}
+
+	to {
+		margin-top: 120px;
+		opacity: 1
+	}
+}
+
+
+.welcomeTextGradient {
+	background: linear-gradient(90.75deg, #8BC34A 49.35%, rgba(31, 180, 37, 0.950781) 93.08%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.boxGradient {
+	background: linear-gradient(42.43deg, #202020 14.15%, rgba(58, 51, 51, 0.649844) 48.96%, rgba(34, 32, 32, 0.6) 81.97%);
+	border: 1px solid #2F2F2F;
+	border-radius: 33px;
+}
+
+.numContainer {
+	width: 88px;
+	height: 88px;
+	background: rgba(91, 218, 172, 0.2);
+	border-radius: 50%;
+}
+
+.numContainerInner {
+	background: rgba(75, 218, 167, 0.67);
+	border-radius: 50%;
+}
+
+.bgPatch1 {
+	position: absolute;
+	width: 393px;
+	height: 273px;
+	left: 150px;
+	top: 260px;
+
+	background: rgba(51, 102, 53, 0.6);
+	filter: blur(186px);
+}
+
+.bgPatch2 {
+	position: absolute;
+	width: 532px;
+	height: 371px;
+	left: 260px;
+	top: 970px;
+
+	background: rgba(51, 102, 53, 0.5);
+	filter: blur(186px);
+}
+
+.bgPatch3Container {
+	width: 70%;
+	overflow-x: hidden;
+	align-self: flex-end;
+	filter: blur(186px);
+	margin-top: -650px;
+}
+
+.bgPatch3 {
+	width: 1006px;
+	height: 702px;
+	background: rgba(51, 102, 53, 0.5);
 }

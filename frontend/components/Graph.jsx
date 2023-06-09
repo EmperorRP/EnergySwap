@@ -124,7 +124,7 @@ export default function Graph({ format, data }) {
 
           datasets: [
             {
-              label: 'Energy Units',
+              label: 'Energy Consumption',
               data: graphData,
               borderColor: '#73FFC2',
               borderWidth: 4,

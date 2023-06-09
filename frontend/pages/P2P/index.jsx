@@ -53,16 +53,16 @@ const DropDownItem = styled.div`
   animation: ${scaleZ} 300ms ${60 * (props.index)}ms ease-in-out forwards;
 `}
   `
-const paymentMethods = ['ETH', 'MATIC', 'GOERLI']
+const paymentMethods = ['EFT Token', 'method 2', 'method 3']
 
 
 export default function P2P() {
 
     const [mode, setMode] = useState('Buyer');
-    const [paymentMethod, setPaymentMethod] = useState('ETH');
+    const [paymentMethod, setPaymentMethod] = useState('EFT Token');
 
     const [pricePerUnitUSD, setPricePerUnitUSD] = useState('');
-    const [pricePerUnitETH, setPricePerUnitETH] = useState('');
+    const [pricePerUnitMATIC, setPricePerUnitMATIC] = useState('');
     const [pricePerUnitError, setPricePerUnitError] = useState("");
     const [amount, setAmount] = useState('');
     const [amountError, setAmountError] = useState("");
@@ -162,12 +162,12 @@ export default function P2P() {
         }
 
         const getConversionRate = async () => {
-            const response = await fetch('https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=ETH');
+            const response = await fetch('https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=MATIC');
             const data = await response.json();
 
-            const ethPriceInUSD = data.ETH;
+            const maticPriceInUSD = data.MATIC;
 
-            setPricePerUnitConversionRate(ethPriceInUSD)
+            setPricePerUnitConversionRate(maticPriceInUSD)
         }
         getConversionRate()
 
@@ -176,22 +176,22 @@ export default function P2P() {
 
 
     useEffect(() => {
-        if (pricePerUnitUSD == "" || pricePerUnitETH == "") {
+        if (pricePerUnitUSD == "" || pricePerUnitMATIC == "") {
             setPricePerUnitError("");
-        } else if (pricePerUnitUSD <= 0 || pricePerUnitETH <= 0) {
-            setPricePerUnitError("Price Per Unit should be a positive number greater than zero!");
+        } else if (pricePerUnitUSD <= 0 || pricePerUnitMATIC <= 0) {
+            setPricePerUnitError("Price Per Unit should be a positive number > zero!");
         }
         else {
             setPricePerUnitError("");
         }
-    }, [pricePerUnitUSD, pricePerUnitETH]);
+    }, [pricePerUnitUSD, pricePerUnitMATIC]);
 
 
     useEffect(() => {
         if (amount == "") {
             setAmountError("");
         } else if (amount <= 0) {
-            setAmountError("Amount should be a positive number greater than zero!");
+            setAmountError("Amount should be a positive number > zero !");
         } else {
             setAmountError("");
         }
@@ -203,10 +203,10 @@ export default function P2P() {
 
         if (currency == 'usd') {
             setPricePerUnitUSD(e.target.value)
-            setPricePerUnitETH((pricePerUnitConversionRate * e.target.value).toFixed(3))
+            setPricePerUnitMATIC((pricePerUnitConversionRate * e.target.value).toFixed(3))
         }
-        else if (currency == 'eth') {
-            setPricePerUnitETH(e.target.value)
+        else if (currency == 'matic') {
+            setPricePerUnitMATIC(e.target.value)
             setPricePerUnitUSD((1 / pricePerUnitConversionRate * e.target.value).toFixed(3))
         }
     }
@@ -416,7 +416,7 @@ export default function P2P() {
                         {/* Available amount */}
                         {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">300 NRGT</div> */}
                         {/* method */}
-                        {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">ETH</div> */}
+                        {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">MATIC</div> */}
                         {/* Total */}
                         {/* <div className="flex items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px]">$69</div> */}
                         {/* action Btn */}
@@ -439,13 +439,13 @@ export default function P2P() {
                                     {/* Seller  */}
                                     <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] pl-[45px] w-[10%]">{listing[0]?.slice(0, 4)}....${listing[0]?.slice(-4)}</div>
                                     {/* Price */}
-                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{(parseInt(listing[2].hex, 16) * pricePerUnitConversionRate).toFixed(3)} ETH</div>
+                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{(parseInt(listing[2].hex, 16) * pricePerUnitConversionRate).toFixed(3)} MATIC</div>
                                     {/* Available amount */}
                                     <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{parseInt(listing[1].hex, 16)}</div>
                                     {/* method */}
-                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">ETH</div>
+                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">EFT</div>
                                     {/* Total */}
-                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{(parseInt(listing[2].hex, 16) * pricePerUnitConversionRate * parseInt(listing[1].hex, 16)).toFixed(3)} ETH</div>
+                                    <div className="flex justify-center items-center font-montserrat font-normal text-white text-center text-[24px] leading-[29px] w-[8%]">{(parseInt(listing[2].hex, 16) * pricePerUnitConversionRate * parseInt(listing[1].hex, 16)).toFixed(3)} MATIC</div>
                                     {/* action Btn */}
                                     <div className="flex items-center justify-end pr-[30px] w-[23%]">
                                         <button className={`${styles.placeRequestBtn} px-[20px] py-[5px] hover:bg-green-500 font-poppins font-bold text-[24px] leading-[36px] text-white transition-colors duration-300`}>
@@ -492,10 +492,10 @@ export default function P2P() {
                             <input type="number"
                                 placeholder="0"
                                 className={`${styles.pricePerUnitInput} text-right mx-[8px]`}
-                                value={pricePerUnitETH}
-                                onChange={(e) => onChangePricePerUnit(e, 'eth')}
+                                value={pricePerUnitMATIC}
+                                onChange={(e) => onChangePricePerUnit(e, 'matic')}
                             />
-                            ETH
+                            MATIC
                         </div>
 
                     </div>
@@ -508,7 +508,7 @@ export default function P2P() {
                     {/* field row */}
                     <div className="z-20 flex items-center justify-between w-[70%] ml-[6%] mt-[36px]">
                         {/* label */}
-                        <div className="font-barlow font-normal text-white text-[36px] leading-[43px]">Amount (Units)</div>
+                        <div className="font-barlow font-normal text-white text-[36px] leading-[43px]">Amount (NRGT)</div>
 
                         {/* Input */}
                         <div className="flex items-center justify-center w-[60%]  border-[1px] rounded-[5px] py-[10px] font-barlow font-normal text-white text-[32px] leading-[38px]">
@@ -532,7 +532,7 @@ export default function P2P() {
                         <div className="font-barlow font-normal text-white text-[36px] leading-[43px]">Total Price</div>
                         {/* Input */}
                         <div className="flex items-center justify-center w-[60%]  border-[1px] rounded-[5px] py-[10px] font-barlow font-normal text-white text-[32px] leading-[38px]">
-                            {(pricePerUnitUSD * amount).toFixed(2)} USD&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;{(pricePerUnitETH * amount).toFixed(2)} ETH
+                            {(pricePerUnitUSD * amount).toFixed(2)} USD&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;{(pricePerUnitMATIC * amount).toFixed(2)} MATIC
                         </div>
                     </div>
 
